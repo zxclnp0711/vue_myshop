@@ -46,8 +46,8 @@ export default {
   data () {
     return {
       loginForm: {
-        username: 'Yuzuia',
-        password: '2277815065'
+        username: 'admin',
+        password: '123456'
       },
       loginRules: {
         username: [
@@ -74,6 +74,8 @@ export default {
         const { data: res } = await this.$http.post('login', this.loginForm)
         if (res.meta.status !== 200) return this.$message.error('登录失败')
         this.$message.success('登录成功')
+        window.sessionStorage.setItem('token', res.data.token)
+        this.$router.push('/home')
       })
     }
   }

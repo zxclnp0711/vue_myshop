@@ -5,7 +5,14 @@ import {
   Form,
   FormItem,
   Input,
-  Message
+  Message,
+  Header,
+  Container,
+  Main,
+  Aside,
+  Menu,
+  Submenu,
+  MenuItem
 } from 'element-ui'
 
 Vue
@@ -14,4 +21,11 @@ Vue
   .use(FormItem)
   .use(Input)
   .use(Row)
+  .use(Header)
+  .use(Container)
+  .use(Main)
+  .use(Aside)
+  .use(Menu)
+  .use(Submenu)
+  .use(MenuItem)
 Vue.prototype.$message = Message
