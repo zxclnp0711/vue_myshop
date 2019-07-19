@@ -12,11 +12,31 @@ import {
   Aside,
   Menu,
   Submenu,
-  MenuItem
+  MenuItem,
+  Breadcrumb,
+  BreadcrumbItem,
+  Card,
+  Col,
+  Table,
+  TableColumn,
+  Switch,
+  Tooltip,
+  Pagination,
+  Dialog
 } from 'element-ui'
 
 Vue
   .use(Button)
+  .use(Dialog)
+  .use(Tooltip)
+  .use(Pagination)
+  .use(Card)
+  .use(Switch)
+  .use(Table)
+  .use(TableColumn)
+  .use(Col)
+  .use(Breadcrumb)
+  .use(BreadcrumbItem)
   .use(Form)
   .use(FormItem)
   .use(Input)

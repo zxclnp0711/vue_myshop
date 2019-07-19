@@ -23,9 +23,11 @@
                    active-text-color="#0091EA"
                    unique-opened
                    :collapse="isCollapse"
-                   :collapse-transition="false">
+                   :collapse-transition="false"
+                   :default-active="activePath"
+                   router>
             <!-- 一级菜单 -->
-            <el-submenu :index="menulist.id + ''"
+            <el-submenu :index="menulist.path"
                         v-for="menulist in menulists"
                         :key="menulist.id">
               <template slot="title">
@@ -34,16 +36,19 @@
                 <span>{{menulist.authName}}</span>
               </template>
               <!-- 二级菜单 -->
-              <el-menu-item :index="subMenulist.id+''"
+              <el-menu-item :index="'/home/' + subMenulist.path"
                             v-for="subMenulist in menulist.children"
-                            :key="subMenulist.id">
+                            :key="subMenulist.id"
+                            @click="saveNavState('/home/' + subMenulist.path)">
                 <i class="el-icon-menu icons"></i>
                 <span>{{subMenulist.authName}}</span>
               </el-menu-item>
             </el-submenu>
           </el-menu>
         </el-aside>
-        <el-main class="el-main">Main</el-main>
+        <el-main class="el-main">
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
   </div>
@@ -61,7 +66,8 @@ export default {
         '145': 'el-icon-pie-chart'
       },
       // 是否折叠
-      isCollapse: false
+      isCollapse: false,
+      activePath: sessionStorage.getItem('activePath') || ''
     }
   },
   created () {
@@ -80,6 +86,11 @@ export default {
     },
     toggleCollapse () {
       this.isCollapse = !this.isCollapse
+    },
+    saveNavState (activePath) {
+      console.log(activePath)
+      sessionStorage.setItem('activePath', activePath)
+      this.activePath = activePath
     }
   }
 }
