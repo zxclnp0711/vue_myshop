@@ -27,12 +27,20 @@ import {
   Tag,
   Tree,
   Select,
-  Option
+  Option,
+  Cascader,
+  Alert,
+  Tabs,
+  TabPane
 } from 'element-ui'
 
 Vue
   .use(Button)
+  .use(Tabs)
+  .use(TabPane)
+  .use(Alert)
   .use(Dialog)
+  .use(Cascader)
   .use(Option)
   .use(Select)
   .use(Tree)
