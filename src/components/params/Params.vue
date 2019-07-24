@@ -32,7 +32,26 @@
           <el-table :data="manyTableData"
                     border
                     stripe>
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+                <el-tag v-for="(item,index) in scope.row.attr_vals"
+                        :key="index"
+                        closable
+                        @close="handleClose(index,scope.row)">{{item}}</el-tag>
+                <el-input class="input-new-tag"
+                          v-if="scope.row.inputVisible"
+                          v-model="scope.row.inputValue"
+                          ref="saveTagInput"
+                          size="small"
+                          @keyup.enter.native="handleInputConfirm(scope.row)"
+                          @blur="handleInputConfirm(scope.row)">
+                </el-input>
+                <el-button v-else
+                           class="button-new-tag"
+                           size="small"
+                           @click="showInput(scope.row)">+ New Tag</el-button>
+              </template>
+            </el-table-column>
             <el-table-column type="index"></el-table-column>
             <el-table-column label="参数名称"
                              prop="attr_name"></el-table-column>
@@ -56,7 +75,25 @@
           <el-table :data="onlyTableData"
                     border
                     stripe>
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+                <el-tag v-for="(item,index) in scope.row.attr_vals"
+                        :key="index"
+                        closable>{{item}}</el-tag>
+                <el-input class="input-new-tag"
+                          v-if="scope.row.inputVisible"
+                          v-model="scope.row.inputValue"
+                          ref="saveTagInput"
+                          size="small"
+                          @keyup.enter.native="handleInputConfirm(scope.row)"
+                          @blur="handleInputConfirm(scope.row)">
+                </el-input>
+                <el-button v-else
+                           class="button-new-tag"
+                           size="small"
+                           @click="showInput(scope.row)">+ New Tag</el-button>
+              </template>
+            </el-table-column>
             <el-table-column type="index"></el-table-column>
             <el-table-column label="属性名称"
                              prop="attr_name"></el-table-column>
@@ -166,10 +203,21 @@ export default {
       this.getParamsData()
     },
     async getParamsData () {
-      if (this.selectedKeys.length !== 3) return (this.selectedKeys = [])
+      if (this.selectedKeys.length !== 3) {
+        this.selectedKeys = []
+        this.manyTableData = []
+        this.onlyTableData = []
+        return
+      }
       const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes`, { params: { sel: this.activeName } })
       console.log(res.data)
       if (res.meta.status !== 200) return this.$message.error('获取参数失败')
+      res.data.forEach(item => {
+        item.attr_vals = item.attr_vals ? item.attr_vals.split(' ') : []
+        item.inputVisible = false
+        item.inputValue = ''
+      })
+      console.log(res)
       if (this.activeName === 'many') {
         this.manyTableData = res.data
       } else {
@@ -223,6 +271,32 @@ export default {
       } catch (error) {
         this.$message.info('已经取消删除')
       }
+    },
+    async handleInputConfirm (row) {
+      if (row.inputValue.trim().length === 0) {
+        row.inputValue = ''
+        row.inputVisible = false
+      } else {
+        row.attr_vals.push(row.inputValue.trim())
+        this.saveAttrVals(row)
+      }
+    },
+    showInput (row) {
+      row.inputVisible = true
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+    handleClose (i, row) {
+      row.attr_vals.splice(i, 1)
+      this.saveAttrVals(row)
+    },
+    async saveAttrVals (row) {
+      const { data: res } = await this.$http.put(`categories/${this.cateId}/attributes/${row.attr_id}`, { attr_name: row.attr_name, attr_sel: row.attr_sel, attr_vals: row.attr_vals.join(' ') })
+      if (res.meta.status !== 200) return this.$message.error('修改参数失败')
+      this.$message.success('修改参数成功')
+      row.inputValue = ''
+      row.inputVisible = false
     }
   },
   computed: {
@@ -252,5 +326,11 @@ export default {
 <style lang="less" scoped>
 .cat_opt {
   margin: 15px 0;
+}
+.el-tag {
+  margin-right: 15px;
+}
+.input-new-tag {
+  width: 120px;
 }
 </style>

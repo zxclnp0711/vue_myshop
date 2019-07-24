@@ -31,12 +31,20 @@ import {
   Cascader,
   Alert,
   Tabs,
-  TabPane
+  TabPane,
+  Step,
+  Steps,
+  Checkbox,
+  CheckboxGroup
 } from 'element-ui'
 
 Vue
   .use(Button)
   .use(Tabs)
+  .use(Checkbox)
+  .use(CheckboxGroup)
+  .use(Step)
+  .use(Steps)
   .use(TabPane)
   .use(Alert)
   .use(Dialog)
